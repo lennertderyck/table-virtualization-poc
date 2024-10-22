@@ -18,9 +18,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "typeRoots": [
+      "./node_modules/@craco/craco/dist/index.d.ts"
+    ]
   },
   "include": [
-    "src"
+    "src",
+    "./craco.config.ts"
   ]
 }

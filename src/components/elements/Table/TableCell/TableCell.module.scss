@@ -1,0 +1,7 @@
+.cell {
+  @apply bg-stone-950;
+  
+  &:not(.asTemplate), &.th {
+    @apply px-6 py-4 overflow-clip text-ellipsis whitespace-nowrap;
+  }
+}

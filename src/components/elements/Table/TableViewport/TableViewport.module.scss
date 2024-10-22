@@ -1,0 +1,23 @@
+.wrapper {
+  outline: none;
+  position: relative;
+  height: 500px;
+  overflow-y: auto;
+  @apply rounded-lg border border-stone-800;
+}
+
+.container {
+  position: absolute;
+  top: 0px;
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+  @apply bg-black;
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0px;
+  overflow: visible;
+  overflow-anchor: none;
+}

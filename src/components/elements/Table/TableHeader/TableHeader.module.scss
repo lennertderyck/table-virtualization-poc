@@ -1,0 +1,33 @@
+.tableHead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  
+  .cell {
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+    @apply bg-stone-700 border-b border-stone-800 bg-opacity-30;
+  
+    .inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      @apply gap-4;
+    }
+  }
+}
+
+
+.action {
+  opacity: .6;
+  @apply rounded-md p-0.5;
+  
+  // &:hover {
+  //   opacity: 1;
+  // }
+  
+  &.active {
+    opacity: 1;
+    @apply bg-stone-700 p-0.5;
+  }
+}

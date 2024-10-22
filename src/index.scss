@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  @apply bg-black;
+}
+
+html, body, #root {
+  height: 100%;
+  @apply text-stone-200
+}
+
+body {
+  font-family: system-ui;
+}
