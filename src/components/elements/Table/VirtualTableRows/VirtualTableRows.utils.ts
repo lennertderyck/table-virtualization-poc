@@ -1,14 +1,14 @@
+import { TABLE_OVERSCAN } from "../Table.constants";
 import { TableVirtualRowsProps } from "./VirtualTableRows.types";
 
 interface TopGutterContext {
   rowHeight: number;
   scrollPosition: number;
 }
-export const determineTopGutterHeight = (context: TopGutterContext): TableVirtualRowsProps => {
-  const position = context.scrollPosition - context.rowHeight;
+export const determineTopGutterHeight = ({ scrollPosition, rowHeight }: TopGutterContext): TableVirtualRowsProps => {
   return {
-    renderGutter: position >= context.rowHeight,
-    gutter: position,
+    renderGutter: scrollPosition >= (rowHeight / TABLE_OVERSCAN),
+    gutter: scrollPosition - (rowHeight * TABLE_OVERSCAN),
   }
 }
 
@@ -20,9 +20,10 @@ interface BottomGutterContext {
 }
 export const determineBottomGutterHeight = ({ itemsAmount, rowHeight, viewportHeight, scrollPosition }: BottomGutterContext): TableVirtualRowsProps => {
   const totalHeight = itemsAmount * rowHeight;
-  const bottomHeight = totalHeight - viewportHeight - scrollPosition;
+  const bottomOverflowHeight = totalHeight - viewportHeight - scrollPosition;
+    
   return {
-    renderGutter: bottomHeight - rowHeight >= rowHeight,
-    gutter: bottomHeight,
+    renderGutter: bottomOverflowHeight - rowHeight >= rowHeight,
+    gutter: bottomOverflowHeight,
   }
 }

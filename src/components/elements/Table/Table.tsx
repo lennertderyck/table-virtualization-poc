@@ -9,8 +9,9 @@ import TableRow from './TableRow/TableRow';
 import TableViewport from './TableViewport/TableViewport';
 import VirtualTableRows from './VirtualTableRows/VirtualTableRows';
 import { determineBottomGutterHeight, determineTopGutterHeight } from './VirtualTableRows/VirtualTableRows.utils';
-import { round, value } from './utils/math';
-import { calculateVisibleRowIndexes } from './utils/virtualization';
+import { round } from './utils/math';
+import { calculateVisibleRowIndexRange } from './utils/virtualization';
+
 
 /**
  * TODO: calulate width, or set fixed width and notify
@@ -25,24 +26,26 @@ const Table: TableComponent = ({ data, columns, columnSort, layout = 'auto' }) =
     setRowHeight(Math.ceil(event.rowHeight));
   }
 
+  const showHeader = columns ? columns?.length > 0 : false;
+  const headerCompensation = showHeader ? rowHeight : 0;
+  const scrollPosition = round(scrollTop).to(rowHeight);
+  const visibleRowIndexes = useMemo(() => calculateVisibleRowIndexRange({
+    viewportHeight,
+    rowHeight,
+    scrollPosition,
+    dataCount: data?.length || 0,
+    headerHeight: headerCompensation,
+  }), [data, rowHeight, scrollPosition, viewportHeight]);
+  
+  const renderedRows = data?.slice(visibleRowIndexes.start, visibleRowIndexes.end);  
   const visibleColumns = columns?.filter(column => column.show !== false);
   const sortedColumnsByPinning = visibleColumns?.sort((a, b) => {
     if (b.pin === 'right') return -1;
     else return 0;
   });
-
-  const showHeader = columns ? columns?.length > 0 : false;
-  const headerCompensation = showHeader ? rowHeight : 0;
-  const scrollPosition = round(scrollTop).to(rowHeight) - headerCompensation;
-  const visibleRowIndexes = useMemo(() => calculateVisibleRowIndexes({
-    viewportHeight,
-    rowHeight,
-    scrollPosition,
-    dataCount: data?.length || 0,
-  }), [data, rowHeight, scrollPosition, viewportHeight]);
   
   const tableLayoutClassname = styles[layout];
-  
+    
   return (
     <>
       <TableViewport
@@ -60,16 +63,17 @@ const Table: TableComponent = ({ data, columns, columnSort, layout = 'auto' }) =
           <VirtualTableRows
             {...determineTopGutterHeight({ rowHeight, scrollPosition })}
           />
-          {data?.map((item, itemIndex) => {
-            const rowInViewPort = value(itemIndex).isBetween( visibleRowIndexes.start, visibleRowIndexes.end);
-            if (!rowInViewPort) return null;
+          {renderedRows?.map((renderedItem, renderedItemIndex) => {
+            /** The actual item index as it would be in the origin data list */
+            const uniqueRowIndex = renderedItemIndex + visibleRowIndexes.start;
+            
             return (
               <TableRow
                 {...{
-                  'data-row-index': itemIndex,
+                  'data-row-index': uniqueRowIndex,
                 }}
                 style={{ height: rowHeight }}
-                key={itemIndex}
+                key={renderedItemIndex}
               >
                 {sortedColumnsByPinning?.map((column, columnIndex) => (
                   <TableCell
@@ -77,7 +81,7 @@ const Table: TableComponent = ({ data, columns, columnSort, layout = 'auto' }) =
                     columns={sortedColumnsByPinning}
                     column={column}
                     isContainer="auto"
-                  >{column.cell(item, itemIndex)}</TableCell>
+                  >{column.cell(renderedItem, uniqueRowIndex)}</TableCell>
                 ))}
               </TableRow>
             )

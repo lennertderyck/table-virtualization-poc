@@ -1,31 +1,21 @@
-import { round, value } from "./math";
+import { TABLE_OVERSCAN } from "../Table.constants";
+import { value } from "./math";
 
 interface Context {
   rowHeight: number;
   scrollPosition: number;
   viewportHeight: number;
   dataCount: number;
-}
-/**
- * @deprecated Not performant.
- */
-export const itemCanRender = (index: number, { rowHeight, scrollPosition, viewportHeight }: Context) => {
-  const distanceToItemTop = round(index * rowHeight).to(rowHeight);
-  const distanceToItemBottom = distanceToItemTop + rowHeight;
-  
-  const isHiddenAtTop = distanceToItemTop < scrollPosition && distanceToItemBottom < scrollPosition;
-  const isHiddenAtBottom = distanceToItemTop > (scrollPosition + rowHeight) + viewportHeight && distanceToItemBottom > (scrollPosition) + viewportHeight;
-  const isNotInView = isHiddenAtTop || isHiddenAtBottom;
-  
-  return !isNotInView;
+  headerHeight: number;
 }
 
-export const calculateVisibleRowIndexes = ({ viewportHeight, rowHeight, scrollPosition, dataCount}: Context) => {
+export const calculateVisibleRowIndexRange = ({ viewportHeight, rowHeight, scrollPosition, dataCount, headerHeight}: Context) => {
   const visibleRowsAmount = Math.ceil(viewportHeight / rowHeight);
-  const start = (scrollPosition) / rowHeight;
-  
+  const position = Math.floor((scrollPosition - (rowHeight * TABLE_OVERSCAN)) / rowHeight);
+  const startIndex = 0 > position ? 0 : position;
+      
   return {
-    start,
-    end: value(start + visibleRowsAmount).max(dataCount -1 || 0),
+    start: startIndex,
+    end: value(startIndex + visibleRowsAmount).max(dataCount -1 || 0) + TABLE_OVERSCAN,
   }
 }
