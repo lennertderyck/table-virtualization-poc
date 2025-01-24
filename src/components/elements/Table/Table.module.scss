@@ -26,3 +26,24 @@
     table-layout: fixed;
   }
 }
+
+.selected td {
+  @apply bg-stone-900;
+  
+  // make background red if it has not selected sibling previously
+  &:has(& + tr:not(.selected)) {
+    @apply bg-stone-900;
+  }
+}
+
+.row {
+  
+  
+  &, * {
+    @apply transition-[border-radius] duration-100;
+  }
+}
+
+.row.selected {
+  @apply bg-stone-900;
+}

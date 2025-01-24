@@ -1,7 +1,15 @@
 .cell {
   @apply bg-stone-950;
   
+  content-visibility: auto;
+
+  
   &:not(.asTemplate), &.th {
     @apply px-6 py-4 overflow-clip text-ellipsis whitespace-nowrap;
   }
+  
+}
+
+.catchOverflow {
+  @apply overflow-clip text-ellipsis;
 }

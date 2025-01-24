@@ -1,5 +1,5 @@
 import { TABLE_OVERSCAN } from "../Table.constants";
-import { value } from "./math";
+import { value } from "./calculations";
 
 interface Context {
   rowHeight: number;

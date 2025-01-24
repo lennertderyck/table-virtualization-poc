@@ -9,6 +9,8 @@ export interface TableColumn<T = any> {
   pin?: 'left' | 'right';
   sort?: ColumnSortDirection;
   show?: boolean;
+  cellWidth?: 'auto' | number;
+  order?: number;
 }
 
 export type ColumnSortDirection = 'asc' | 'desc' | null | undefined;
@@ -23,6 +25,8 @@ export interface ColumnPinRule {
   side: ColumnPinSide;
 }
 
+export type RowSelectionMode = 'none' | 'single' | 'multi';
+
 export interface TableProps<T> {
   data: T[];
   layout?: 'fixed' | 'auto';
@@ -32,6 +36,8 @@ export interface TableProps<T> {
   onColumnSortChange?: (rules: ColumnSortRule[]) => void;
   columnPinning?: ColumnPinRule[];
   onColumnPinningChange?: (rules: ColumnPinRule[]) => void;
+  onSelectedRowsChange?: (selectedRows: T[]) => void;
+  selectMode?: 'none' | 'single' | 'multi';
   // /** @deprecated **/
   // renderItem?: (item: T, index: number) => JSX.Element;
 }

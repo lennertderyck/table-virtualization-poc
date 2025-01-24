@@ -1,0 +1,63 @@
+.month {
+  display: flex;
+  flex-direction: column;
+}
+
+.week {
+  display: flex;
+  flex-direction: row;
+
+  &:not(:last-child) {
+    @apply border-b border-stone-800;
+  }
+}
+
+.day {
+  flex: 1;
+  aspect-ratio: 1;
+  
+  .dayIndicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    aspect-ratio: 1;
+    border-radius: 100%;
+    font-size: .8rem;
+    user-select: none;
+  }
+  
+  &:hover {
+    @apply bg-stone-800;
+  }
+  
+  &.today {
+    &:hover {
+      @apply bg-red-950;
+    }
+    
+    .dayIndicator {
+      @apply bg-red-500;
+    }
+  }
+  
+  &:not(:last-child) {
+    @apply border-r border-stone-800;
+  }
+  
+  &.straggler {
+    &:hover {
+      @apply bg-stone-950;
+    }
+    
+    .content {
+      @apply opacity-30;
+    }
+  }
+  
+  .content {
+    @apply p-2;
+  }
+
+}

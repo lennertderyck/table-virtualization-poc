@@ -4,9 +4,10 @@
   z-index: 10;
   
   .cell {
+    position: relative;
     font-weight: 500;
     backdrop-filter: blur(4px);
-    @apply bg-stone-700 border-b border-stone-800 bg-opacity-30;
+    @apply bg-stone-700 border-b border-stone-800 bg-opacity-30 pr-2;
   
     .inner {
       display: flex;
@@ -15,6 +16,12 @@
       @apply gap-4;
     }
   }
+}
+
+.controlBox {  
+  position: absolute;
+  
+  @apply -bottom-4 right-0;
 }
 
 

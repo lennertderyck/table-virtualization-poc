@@ -1,10 +1,11 @@
 import classNames from 'classnames';
 import { FC } from 'react';
 import Icon from '../../../basics/Icon/Icon';
-import { ColumnPinRule, ColumnSortDirection, ColumnSortRule, TableColumn } from '../Table.types';
+import { ColumnPinRule, ColumnSortDirection, ColumnSortRule, RowSelectionMode, TableColumn } from '../Table.types';
 import TableCell from '../TableCell/TableCell';
 import TableRow from '../TableRow/TableRow';
 import { getColumnSortRule, getColumnSortRuleIcon, switchColumbSortDirection } from '../utils/columns';
+import { getRowSelectableRule } from '../utils/rows';
 import styles from './TableHeader.module.scss';
 
 interface Props {
@@ -13,9 +14,12 @@ interface Props {
   onColumnSort?: (accessor: string, direction: ColumnSortDirection) => void;
   columnPinning?: ColumnPinRule[];
   onColumnPinning?: (accessor: string, side: ColumnPinRule) => void;
+  rowSelection?: 'every' | 'some' | null;
+  onRowSelectionChange?: (selection: 'every' | 'some' | null) => void;
+  selectMode?: RowSelectionMode;
 };
 
-const TableHeader: FC<Props> = ({ columns, columnSort, onColumnSort }) => {
+const TableHeader: FC<Props> = ({ columns, columnSort, onColumnSort, rowSelection, selectMode }) => {
   const bindColumnSort = (column: TableColumn, currentDirection: ColumnSortDirection) => () => {
     if (column?.id) {
       onColumnSort?.(
@@ -29,10 +33,31 @@ const TableHeader: FC<Props> = ({ columns, columnSort, onColumnSort }) => {
   const columnsMeta = sortedColumns.map((column) => ({
     sortDirection: column.accessor && columnSort ? getColumnSortRule(columnSort, column.accessor) : null,
   }))
+  const showRowSelection = getRowSelectableRule(selectMode);
   
   return (
     <thead className={styles.tableHead}>
       <TableRow>
+        {showRowSelection && <TableCell
+          column={{ id: 'select', header: '', cell: () => null }}
+          columns={columns}
+          element="th" 
+          isContainer={false} 
+          className={styles.cell}
+        ><input 
+          type="checkbox" 
+          checked={rowSelection === 'every'}
+          onChange={() => console.log('select all')}
+          ref={ref => {
+            if (ref) {
+              if (rowSelection === 'some') {
+                ref.indeterminate = true;
+              } else {
+                ref.indeterminate = false;
+              }
+            }
+          }}
+        /></TableCell>}
         { sortedColumns?.map((column, index) => {
           const columnMeta = columnsMeta[index];
           const isSorting = !!columnMeta?.sortDirection?.direction;
@@ -48,6 +73,9 @@ const TableHeader: FC<Props> = ({ columns, columnSort, onColumnSort }) => {
             >
               <div className={styles.inner}>
                 <span>{column.header}</span>
+                <button>
+                  <Icon name="more-2-line" />
+                </button>
                 {!column.sort 
                   ? null
                   : <button
@@ -57,9 +85,14 @@ const TableHeader: FC<Props> = ({ columns, columnSort, onColumnSort }) => {
                     <Icon name={getColumnSortRuleIcon(columnMeta?.sortDirection?.direction)} />
                   </button>
                 }
+                {/* <div className={styles.controlBox}>
+                  { column.pin === 'left' && (<Icon name="align-item-left-line" className="text-sky-500" />)}
+                  { column.pin === 'right' && (<Icon name="align-item-right-line" className="text-sky-500" />)}
+                </div> */}
               </div>
             </TableCell>
-        )})}
+          )
+        })}
       </TableRow>
     </thead>
   )
